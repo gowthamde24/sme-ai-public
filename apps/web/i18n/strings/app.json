@@ -139809,5 +139809,522 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "emp.title": {
+  "en": "Your AI team",
+  "te": "మీ AI టీమ్",
+  "hi": "आपकी AI टीम",
+  "kn": "ನಿಮ್ಮ AI ಟೀಮ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.sub": {
+  "en": "Each AI employee has a name, a job to do and a voice. They all know your business.",
+  "te": "ప్రతి AI ఎంప్లాయీకి ఒక పేరు, చేయాల్సిన పని, ఒక వాయిస్ ఉంటాయి. వీళ్లందరికీ మీ బిజినెస్ గురించి తెలుసు.",
+  "hi": "हर AI एम्प्लॉयी का एक नाम, एक काम और एक आवाज़ होती है। सब आपके बिज़नेस को जानते हैं।",
+  "kn": "ಪ್ರತಿ AI ಎಂಪ್ಲಾಯಿಗೆ ಒಂದು ಹೆಸರು, ಮಾಡಬೇಕಾದ ಕೆಲಸ ಮತ್ತು ಒಂದು ಧ್ವನಿ ಇದೆ. ಎಲ್ಲರಿಗೂ ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಗೊತ್ತು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.new": {
+  "en": "New AI employee",
+  "te": "కొత్త AI ఎంప్లాయీ",
+  "hi": "नया AI एम्प्लॉयी",
+  "kn": "ಹೊಸ AI ಎಂಪ್ಲಾಯಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.jobs_link": {
+  "en": "See every job your team is running",
+  "te": "మీ టీమ్ చేస్తున్న ప్రతి పనిని చూడండి",
+  "hi": "आपकी टीम जो हर काम कर रही है वह देखें",
+  "kn": "ನಿಮ್ಮ ಟೀಮ್ ಮಾಡುತ್ತಿರುವ ಪ್ರತಿ ಕೆಲಸ ನೋಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.count": {
+  "en": "{n} of {limit} AI employees",
+  "te": "{limit} లో {n} AI ఎంప్లాయీలు",
+  "hi": "{limit} में से {n} AI एम्प्लॉयी",
+  "kn": "{limit} ರಲ್ಲಿ {n} AI ಎಂಪ್ಲಾಯಿಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.limit.trial": {
+  "en": "Your trial has 1 AI employee. A paid plan has up to 5.",
+  "te": "మీ ట్రయల్‌లో 1 AI ఎంప్లాయీ ఉంటారు. పెయిడ్ ప్లాన్‌లో 5 వరకు ఉండవచ్చు.",
+  "hi": "आपके ट्रायल में 1 AI एम्प्लॉयी है। पेड प्लान में 5 तक हो सकते हैं।",
+  "kn": "ನಿಮ್ಮ ಟ್ರಯಲ್‌ನಲ್ಲಿ 1 AI ಎಂಪ್ಲಾಯಿ ಇರುತ್ತಾರೆ. ಪೇಡ್ ಪ್ಲಾನ್‌ನಲ್ಲಿ 5 ರವರೆಗೆ ಇರಬಹುದು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.limit.full": {
+  "en": "You have all {limit} AI employees your plan allows. Archive one to add another.",
+  "te": "మీ ప్లాన్‌లో ఉండగలిగే {limit} AI ఎంప్లాయీలూ ఉన్నారు. ఇంకొకరిని చేర్చాలంటే ఒకరిని ఆర్కైవ్ చేయండి.",
+  "hi": "आपके प्लान के सभी {limit} AI एम्प्लॉयी हो चुके हैं। नया जोड़ने के लिए किसी एक को आर्काइव करें।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇರಬಹುದಾದ ಎಲ್ಲಾ {limit} AI ಎಂಪ್ಲಾಯಿಗಳು ಇದ್ದಾರೆ. ಇನ್ನೊಬ್ಬರನ್ನು ಸೇರಿಸಲು ಒಬ್ಬರನ್ನು ಆರ್ಕೈವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.default": {
+  "en": "Main assistant",
+  "te": "మెయిన్ అసిస్టెంట్",
+  "hi": "मुख्य असिस्टेंट",
+  "kn": "ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.default.d": {
+  "en": "Answers every call and chat unless another AI employee has that number.",
+  "te": "మరో AI ఎంప్లాయీకి ఆ నంబర్ లేకపోతే ప్రతి కాల్, చాట్‌కి ఇదే సమాధానం ఇస్తుంది.",
+  "hi": "जब तक किसी और AI एम्प्लॉयी के पास वह नंबर न हो, हर कॉल और चैट का जवाब यही देता है।",
+  "kn": "ಬೇರೆ AI ಎಂಪ್ಲಾಯಿಗೆ ಆ ನಂಬರ್ ಇಲ್ಲದಿದ್ದರೆ ಪ್ರತಿ ಕಾಲ್, ಚಾಟ್‌ಗೆ ಇದೇ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.status.draft": {
+  "en": "Not on yet",
+  "te": "ఇంకా ఆన్ కాలేదు",
+  "hi": "अभी चालू नहीं",
+  "kn": "ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.status.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.status.paused": {
+  "en": "Paused",
+  "te": "పాజ్‌లో ఉంది",
+  "hi": "रुका है",
+  "kn": "ಪಾಜ್‌ನಲ್ಲಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.status.archived": {
+  "en": "Archived",
+  "te": "ఆర్కైవ్ అయింది",
+  "hi": "आर्काइव",
+  "kn": "ಆರ್ಕೈವ್ ಆಗಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.turn_on": {
+  "en": "Turn on",
+  "te": "ఆన్ చేయండి",
+  "hi": "चालू करें",
+  "kn": "ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.pause": {
+  "en": "Pause",
+  "te": "పాజ్ చేయండి",
+  "hi": "रोकें",
+  "kn": "ಪಾಜ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resume": {
+  "en": "Turn on again",
+  "te": "మళ్ళీ ఆన్ చేయండి",
+  "hi": "फिर चालू करें",
+  "kn": "ಮತ್ತೆ ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.open": {
+  "en": "Open",
+  "te": "ఓపెన్",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.calls_today": {
+  "en": "{n} calls today",
+  "te": "ఈ రోజు {n} కాల్స్",
+  "hi": "आज {n} कॉल",
+  "kn": "ಇಂದು {n} ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.calls_today.one": {
+  "en": "1 call today",
+  "te": "ఈ రోజు 1 కాల్",
+  "hi": "आज 1 कॉल",
+  "kn": "ಇಂದು 1 ಕಾಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.no_calls": {
+  "en": "No calls today",
+  "te": "ఈ రోజు కాల్స్ లేవు",
+  "hi": "आज कोई कॉल नहीं",
+  "kn": "ಇಂದು ಕಾಲ್‌ಗಳಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.only_owner": {
+  "en": "Only the owner or an admin can add or change AI employees.",
+  "te": "AI ఎంప్లాయీలను చేర్చడం, మార్చడం ఓనర్ లేదా అడ్మిన్ మాత్రమే చేయగలరు.",
+  "hi": "AI एम्प्लॉयी जोड़ना या बदलना सिर्फ़ ओनर या एडमिन कर सकते हैं।",
+  "kn": "AI ಎಂಪ್ಲಾಯಿಗಳನ್ನು ಸೇರಿಸಲು ಅಥವಾ ಬದಲಿಸಲು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಸಾಧ್ಯ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.na": {
+  "en": "AI employees are not ready for your workspace yet.",
+  "te": "మీ వర్క్‌స్పేస్‌కి AI ఎంప్లాయీలు ఇంకా సిద్ధంగా లేరు.",
+  "hi": "आपके वर्कस्पेस के लिए AI एम्प्लॉयी अभी तैयार नहीं हैं।",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ AI ಎಂಪ್ಲಾಯಿಗಳು ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.receptionist": {
+  "en": "Receptionist",
+  "te": "రిసెప్షనిస్ట్",
+  "hi": "रिसेप्शनिस्ट",
+  "kn": "ರಿಸೆಪ್ಷನಿಸ್ಟ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.receptionist.d": {
+  "en": "Answers calls and chats from customers, and passes on what you need to see.",
+  "te": "కస్టమర్ల కాల్స్, చాట్స్‌కి సమాధానం ఇస్తుంది, మీరు చూడాల్సినవి మీకు పంపుతుంది.",
+  "hi": "ग्राहकों के कॉल और चैट का जवाब देता है, और जो आपको देखना है वह आपको भेजता है।",
+  "kn": "ಗ್ರಾಹಕರ ಕಾಲ್, ಚಾಟ್‌ಗಳಿಗೆ ಉತ್ತರಿಸುತ್ತದೆ, ನೀವು ನೋಡಬೇಕಾದದ್ದನ್ನು ನಿಮಗೆ ಕಳುಹಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.sales": {
+  "en": "Sales helper",
+  "te": "సేల్స్ హెల్పర్",
+  "hi": "सेल्स हेल्पर",
+  "kn": "ಸೇಲ್ಸ್ ಹೆಲ್ಪರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.sales.d": {
+  "en": "Handles new enquiries, prices and quotes.",
+  "te": "కొత్త ఎంక్వైరీలు, ధరలు, కొటేషన్లు చూసుకుంటుంది.",
+  "hi": "नई इन्क्वायरी, दाम और कोटेशन संभालता है।",
+  "kn": "ಹೊಸ ಎನ್‌ಕ್ವೈರಿ, ಬೆಲೆ, ಕೊಟೇಶನ್‌ಗಳನ್ನು ನೋಡಿಕೊಳ್ಳುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.follow_up": {
+  "en": "Follow-up helper",
+  "te": "ఫాలో-అప్ హెల్పర్",
+  "hi": "फ़ॉलो-अप हेल्पर",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಹೆಲ್ಪರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.follow_up.d": {
+  "en": "Gets back to customers who have not decided yet.",
+  "te": "ఇంకా నిర్ణయించుకోని కస్టమర్లను మళ్ళీ సంప్రదిస్తుంది.",
+  "hi": "जिन ग्राहकों ने अभी तय नहीं किया उनसे दोबारा बात करता है।",
+  "kn": "ಇನ್ನೂ ನಿರ್ಧರಿಸದ ಗ್ರಾಹಕರನ್ನು ಮತ್ತೆ ಸಂಪರ್ಕಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.collections": {
+  "en": "Payment reminder",
+  "te": "పేమెంట్ రిమైండర్",
+  "hi": "पेमेंट रिमाइंडर",
+  "kn": "ಪೇಮೆಂಟ್ ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.collections.d": {
+  "en": "Reminds customers politely about money they owe.",
+  "te": "కస్టమర్లకు రావాల్సిన డబ్బు గురించి మర్యాదగా గుర్తు చేస్తుంది.",
+  "hi": "ग्राहकों को बकाया पैसे के बारे में विनम्रता से याद दिलाता है।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಬರಬೇಕಾದ ಹಣದ ಬಗ್ಗೆ ವಿನಯದಿಂದ ನೆನಪಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.support": {
+  "en": "Support helper",
+  "te": "సపోర్ట్ హెల్పర్",
+  "hi": "सपोर्ट हेल्पर",
+  "kn": "ಸಪೋರ್ಟ್ ಹೆಲ್ಪರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.support.d": {
+  "en": "Answers questions from customers who already bought.",
+  "te": "ఇప్పటికే కొన్న కస్టమర్ల ప్రశ్నలకు సమాధానం ఇస్తుంది.",
+  "hi": "जो ग्राहक खरीद चुके हैं उनके सवालों के जवाब देता है।",
+  "kn": "ಈಗಾಗಲೇ ಖರೀದಿಸಿದ ಗ್ರಾಹಕರ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.appointments": {
+  "en": "Visit booker",
+  "te": "విజిట్ బుకర్",
+  "hi": "विज़िट बुकर",
+  "kn": "ವಿಸಿಟ್ ಬುಕರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.appointments.d": {
+  "en": "Books and reminds store visits and appointments.",
+  "te": "స్టోర్ విజిట్లు, అపాయింట్‌మెంట్లు బుక్ చేసి గుర్తు చేస్తుంది.",
+  "hi": "स्टोर विज़िट और अपॉइंटमेंट बुक करता है और याद दिलाता है।",
+  "kn": "ಸ್ಟೋರ್ ವಿಸಿಟ್, ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್‌ಗಳನ್ನು ಬುಕ್ ಮಾಡಿ ನೆನಪಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.custom": {
+  "en": "Your own role",
+  "te": "మీ సొంత రోల్",
+  "hi": "आपका अपना रोल",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ರೋಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.role.custom.d": {
+  "en": "You decide what this AI employee does.",
+  "te": "ఈ AI ఎంప్లాయీ ఏం చేయాలో మీరే నిర్ణయిస్తారు.",
+  "hi": "यह AI एम्प्लॉयी क्या करे, यह आप तय करते हैं।",
+  "kn": "ಈ AI ಎಂಪ್ಲಾಯಿ ಏನು ಮಾಡಬೇಕು ಎಂದು ನೀವೇ ನಿರ್ಧರಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.employee_limit": {
+  "en": "You have all the AI employees your plan allows.",
+  "te": "మీ ప్లాన్‌లో ఉండగలిగే AI ఎంప్లాయీలందరూ ఉన్నారు.",
+  "hi": "आपके प्लान में जितने AI एम्प्लॉयी हो सकते हैं, सब हो चुके हैं।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇರಬಹುದಾದ ಎಲ್ಲಾ AI ಎಂಪ್ಲಾಯಿಗಳು ಇದ್ದಾರೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.name_taken": {
+  "en": "Another AI employee already has that name. Pick a different name.",
+  "te": "ఆ పేరు ఇప్పటికే మరో AI ఎంప్లాయీకి ఉంది. వేరే పేరు పెట్టండి.",
+  "hi": "यह नाम किसी और AI एम्प्लॉयी का है। कोई दूसरा नाम रखें।",
+  "kn": "ಆ ಹೆಸರು ಈಗಾಗಲೇ ಬೇರೆ AI ಎಂಪ್ಲಾಯಿಗೆ ಇದೆ. ಬೇರೆ ಹೆಸರು ಇಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.last_default": {
+  "en": "The main assistant cannot be paused or archived.",
+  "te": "మెయిన్ అసిస్టెంట్‌ని పాజ్ లేదా ఆర్కైవ్ చేయలేరు.",
+  "hi": "मुख्य असिस्टेंट को रोका या आर्काइव नहीं किया जा सकता।",
+  "kn": "ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್ ಅನ್ನು ಪಾಜ್ ಅಥವಾ ಆರ್ಕೈವ್ ಮಾಡಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.settings_elsewhere": {
+  "en": "This is set in My assistant, not here.",
+  "te": "ఇది ఇక్కడ కాదు, My assistant లో సెట్ చేస్తారు.",
+  "hi": "यह यहाँ नहीं, My assistant में सेट होता है।",
+  "kn": "ಇದನ್ನು ಇಲ್ಲಿ ಅಲ್ಲ, My assistant ನಲ್ಲಿ ಸೆಟ್ ಮಾಡಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.hours_wider": {
+  "en": "Hours must be inside 10:00 to 21:00.",
+  "te": "టైమ్ 10:00 నుంచి 21:00 లోపే ఉండాలి.",
+  "hi": "समय 10:00 से 21:00 के अंदर ही होना चाहिए।",
+  "kn": "ಸಮಯ 10:00 ರಿಂದ 21:00 ರೊಳಗೆ ಇರಬೇಕು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.validation_error": {
+  "en": "Please check what you wrote and try again.",
+  "te": "మీరు రాసింది చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपने जो लिखा है उसे देखकर फिर कोशिश करें।",
+  "kn": "ನೀವು ಬರೆದದ್ದನ್ನು ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.voice_unavailable": {
+  "en": "This voice cannot speak right now. No other voice was used.",
+  "te": "ఈ వాయిస్ ఇప్పుడు మాట్లాడలేకపోతోంది. వేరే వాయిస్ వాడలేదు.",
+  "hi": "यह आवाज़ अभी बोल नहीं पा रही। कोई दूसरी आवाज़ इस्तेमाल नहीं हुई।",
+  "kn": "ಈ ಧ್ವನಿ ಈಗ ಮಾತನಾಡಲಾಗುತ್ತಿಲ್ಲ. ಬೇರೆ ಧ್ವನಿ ಬಳಸಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.rate_limited": {
+  "en": "You have played enough samples today. Try again tomorrow.",
+  "te": "ఈ రోజు శాంపిల్స్ చాలు. రేపు మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आज के लिए सैंपल की सीमा पूरी हो गई। कल फिर कोशिश करें।",
+  "kn": "ಇಂದಿನ ಸ್ಯಾಂಪಲ್‌ಗಳು ಸಾಕಾಯಿತು. ನಾಳೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.forbidden": {
+  "en": "Only the owner or an admin can do this.",
+  "te": "ఇది ఓనర్ లేదా అడ్మిన్ మాత్రమే చేయగలరు.",
+  "hi": "यह सिर्फ़ ओनर या एडमिन कर सकते हैं।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.not_found": {
+  "en": "That AI employee is not there any more.",
+  "te": "ఆ AI ఎంప్లాయీ ఇప్పుడు లేరు.",
+  "hi": "वह AI एम्प्लॉयी अब नहीं है।",
+  "kn": "ಆ AI ಎಂಪ್ಲಾಯಿ ಈಗ ಇಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.err.unavailable": {
+  "en": "Could not do that now. Nothing was changed. Please try again.",
+  "te": "ఇప్పుడు చేయలేకపోయాం. ఏదీ మారలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो पाया। कुछ नहीं बदला। फिर कोशिश करें।",
+  "kn": "ಈಗ ಮಾಡಲಾಗಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }

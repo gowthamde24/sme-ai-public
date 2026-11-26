@@ -122,6 +122,8 @@ export const NAV: readonly NavGroup[] = [
       { id: "outreachrules", label: "Rules", icon: "campaigns", path: "/outreach/rules", feature: "outreach", roles: WRITERS },
       // campaigns S4 (17 Nov, behind OFFER_SCREENS): who said yes to offers; under More on the Campaigns row
       { id: "jobs", label: "AI Team", icon: "jobs", path: "/jobs", also: ["/do-not-call"], feature: "jobs", roles: ALL_ROLES },
+      // AI employees (owner, 26 Nov 2026): while EMPLOYEES is on the AI Team row opens the list of employees; the jobs page stays under it
+      { id: "employees", label: "AI Team", icon: "jobs", path: "/employees", feature: "employees", roles: ALL_ROLES },
       { id: "offerconsent", label: "Who wants offers", icon: "campaigns", path: "/marketing-consent", feature: "offers", roles: WRITERS },
       { id: "tasks", label: "Tasks", icon: "calls", path: "/tasks", feature: "tasks", roles: ALL_ROLES },
       { id: "leadreport", label: "Lead report", icon: "report", path: "/lead-report", feature: "outreach", roles: ADMINS },
@@ -505,7 +507,7 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
     rows: [
       { id: "v6-today", label: "Today", icon: "today", pages: ["today", "assistant"], count: "today" },
       // JOBS (owner 19 Nov): everything the assistant does for the shop, one row of its own; there only while JOBS is on (the page is offered by the feature "jobs")
-      { id: "v6-jobs", label: "AI Team", icon: "jobs", pages: ["jobs", "offerconsent", "calllist", "tasks"], onlyWith: "jobs" },
+      { id: "v6-jobs", label: "AI Team", icon: "jobs", pages: ["employees", "jobs", "offerconsent", "calllist", "tasks"], onlyWith: "jobs" },
       { id: "v6-myassistant", label: "My assistant", icon: "assistant", pages: ["myassistant", "train", "office"], status: "assistant" },
       { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live"], count: "calls" },
       { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox", "templates"], count: "chats" },
