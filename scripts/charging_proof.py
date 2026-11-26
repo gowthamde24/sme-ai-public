@@ -39,8 +39,22 @@ LINES: list[str] = []
 FAILS: list[str] = []
 
 
+_PLAIN = {c: c for c in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:;()[]{}'_-/+%=<>@#"}   # the only characters a printed value may carry (copied from this table, never from the value)
+
+
+def plain(v: Any) -> str:
+    """A value as it may be printed: numbers and booleans as such, text only through the table of plain characters (nothing of a token or a password can be echoed by accident)."""
+    if isinstance(v, bool) or v is None:
+        return str(bool(v)) if isinstance(v, bool) else "None"
+    if isinstance(v, int):
+        return str(int(v))
+    if isinstance(v, float):
+        return str(float(v))
+    return "".join(_PLAIN[c] for c in str(v)[:400] if c in _PLAIN)
+
+
 def say(ok: bool, step: str, expected: Any, got: Any) -> None:
-    line = f"{'PASS' if ok else 'FAIL'}  {step}: expected {expected}, got {got}"
+    line = f"{'PASS' if ok else 'FAIL'}  {step}: expected {plain(expected)}, got {plain(got)}"
     print(line)
     LINES.append(line)
     if not ok:
