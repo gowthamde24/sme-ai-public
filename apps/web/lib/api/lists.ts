@@ -1,4 +1,4 @@
-import { BILLING_PERIODS, COLUMN_ROLES, COLUMN_TYPES, LIST_KINDS, REFUSALS, type Cell, type Column, type Fail, type ListKind, type Refusal, type Row, type RowPage, type SellList } from "@/lib/lists/types";
+import { BILLING_PERIODS, BUILTIN_LISTS, COLUMN_ROLES, EDIT_IN, COLUMN_TYPES, LIST_KINDS, REFUSALS, type Cell, type Column, type Fail, type ListKind, type Refusal, type Row, type RowPage, type SellList } from "@/lib/lists/types";
 
 import { ApiAuthError, ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
@@ -37,7 +37,7 @@ function strictColumns(v: unknown): Column[] {
 }
 export function parseList(row: unknown): SellList {
   const x = rec(row, "list");
-  return { id: str(x.id, "id", 64), name: str(x.name, "name", 60), kind: oneOf(x.kind, LIST_KINDS, "kind"), isMain: bool(x.is_main, "is_main"), rowCount: int(x.row_count, "row_count", 0, 100000), columns: strictColumns(x.columns) };
+  return { id: str(x.id, "id", 64), name: str(x.name, "name", 60), kind: oneOf(x.kind, LIST_KINDS, "kind"), isMain: bool(x.is_main, "is_main"), rowCount: int(x.row_count, "row_count", 0, 100000), columns: strictColumns(x.columns), builtin: (BUILTIN_LISTS as readonly unknown[]).includes(x.builtin) ? (x.builtin as (typeof BUILTIN_LISTS)[number]) : null, editIn: (EDIT_IN as readonly unknown[]).includes(x.edit_in) ? (x.edit_in as (typeof EDIT_IN)[number]) : null };
 }
 export function parseLists(json: unknown): SellList[] {
   return readRows(rec(json, "lists").lists, "lists", parseList, 20);
@@ -95,3 +95,35 @@ export async function removeRow(token: string, tenantId: string, id: string, row
   if (!isCanonicalUuid(rowId)) throw new ApiContractError("row id");
   await apiRequest(`${listPath(tenantId, id)}/rows/${rowId}/remove`, token, { method: "POST", body: "{}" });
 }
+
+/**
+ * `POST /lists/starters` (C1, 26 Nov 2026; Owner or Admin; idempotent): makes the textile shop's starter lists (Sarees, Dress materials, Blouses, Dupattas, Fabric by the metre, Stitching and alterations), each with a Category column. The answer is not used: the page reads the lists again.
+ */
+export async function createStarterLists(token: string, tenantId: string): Promise<void> {
+  await apiRequest(`${base(tenantId)}/starters`, token, { method: "POST", body: "{}" });
+}
+
+/**
+ * Import into a chosen list (slice 3 of the lists contract). `preview` reads a file the assistant's file route already holds (Excel, CSV, PDF, photo) into rows `{name, cells}` matched to the list's columns; nothing is saved. `commit` saves the owner's checked rows (all or nothing; a row whose name exists UPDATES that item; only the Owner may send a rupee amount).
+ */
+export type ImportPreview = { rows: { name: string; cells: Record<string, Cell> }[]; notes: { code: string; row: number | null; column: string | null }[]; unclear: boolean };
+export function parseImportPreview(json: unknown): ImportPreview {
+  const x = rec(json, "preview");
+  const rows = readRows(x.rows, "rows", (r) => {
+    const o = rec(r, "row");
+    const cells: Record<string, Cell> = {};
+    if (typeof o.cells === "object" && o.cells !== null && !Array.isArray(o.cells)) for (const [k, v] of Object.entries(o.cells)) cells[k] = parseCell(v);
+    return { name: str(o.name, "name", 120), cells };
+  }, 1000);
+  const notes = Array.isArray(x.notes) ? x.notes.flatMap((n) => (typeof n === "object" && n !== null && typeof (n as { code?: unknown }).code === "string" ? [{ code: String((n as { code: string }).code).slice(0, 40), row: typeof (n as { row?: unknown }).row === "number" ? ((n as { row: number }).row) : null, column: typeof (n as { column?: unknown }).column === "string" ? ((n as { column: string }).column).slice(0, 60) : null }] : [])) : [];
+  return { rows, notes, unclear: x.unclear === true };
+}
+export async function previewListImport(token: string, tenantId: string, id: string, fileId: string): Promise<ImportPreview> {
+  if (!isCanonicalUuid(fileId)) throw new ApiContractError("file id");
+  return parseImportPreview(await apiRequest(`${listPath(tenantId, id)}/import/preview`, token, { method: "POST", body: JSON.stringify({ file_id: fileId }) }));
+}
+export async function commitListImport(token: string, tenantId: string, id: string, rows: readonly { name: string; cells: Readonly<Record<string, Cell>> }[]): Promise<{ created: number; updated: number }> {
+  const x = rec(await apiRequest(`${listPath(tenantId, id)}/import/commit`, token, { method: "POST", body: JSON.stringify({ rows: rows.slice(0, 1000) }) }), "commit");
+  return { created: int(x.created, "created", 0, 100000), updated: int(x.updated, "updated", 0, 100000) };
+}
+

@@ -6,7 +6,8 @@ export const LIST_KINDS = ["products", "digital", "services", "bookings", "cours
 export type ListKind = (typeof LIST_KINDS)[number];
 export const COLUMN_TYPES = ["text", "number", "rupees", "yes_no", "choice", "photo", "link", "date", "datetime", "duration"] as const;
 export type ColumnType = (typeof COLUMN_TYPES)[number];
-export const COLUMN_ROLES = ["price", "availability", "quantity", "how_to_buy", "description"] as const;
+/** `category` (C1, 26 Nov 2026): a choice column the owner uses to group the items (Sarees: Silk, Cotton, Bridal); the assistant reads it. */
+export const COLUMN_ROLES = ["price", "availability", "category", "quantity", "how_to_buy", "description"] as const;
 export type ColumnRole = (typeof COLUMN_ROLES)[number];
 export const BILLING_PERIODS = ["one_time", "per_month", "per_year", "per_hour", "per_day", "per_unit", "from"] as const;
 export type BillingPeriod = (typeof BILLING_PERIODS)[number];
@@ -27,7 +28,10 @@ export type Column = {
   readonly billingPeriod: BillingPeriod | null;
   readonly quoteDefault: boolean;
 };
-export type SellList = { readonly id: string; readonly name: string; readonly kind: ListKind; readonly isMain: boolean; readonly rowCount: number; readonly columns: readonly Column[] };
+/** The stores that already exist, shown as READ-ONLY lists (slice 4): the owner edits them where `editIn` says. */
+export const BUILTIN_LISTS = ["catalogue", "services", "courses", "properties", "pricelist", "quote"] as const;
+export const EDIT_IN = ["catalogue", "what_you_sell", "price_list"] as const;
+export type SellList = { readonly id: string; readonly name: string; readonly kind: ListKind; readonly isMain: boolean; readonly rowCount: number; readonly columns: readonly Column[]; /** set on a built-in list (Sarees, ...): it has no rows route here */ readonly builtin?: (typeof BUILTIN_LISTS)[number] | null; readonly editIn?: (typeof EDIT_IN)[number] | null };
 /** A cell is what its column holds: text, a number (rupees in whole paise), yes or no, or nothing. */
 export type Cell = string | number | boolean | null;
 export type Row = { readonly id: string; readonly name: string; readonly cells: Readonly<Record<string, Cell>>; readonly active: boolean };

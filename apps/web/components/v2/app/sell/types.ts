@@ -8,7 +8,12 @@ export type SaveExtra = { freshId?: string; /** a NEW saree made from a price li
 export type Reading = { entries: SellEntry[]; unclear: boolean; notes: SellNote[] };
 
 /** What the section may ask its server (Owner and Admin; null for the others, who only read). Bound to the workspace by the page. */
+/** A list of the owner's own that an import can go into (the lists feature): its default price column and, when it has one, its Category column with the owner's words. */
+export type ImportTarget = { id: string; name: string; priceKey: string | null; categoryKey: string | null; categoryChoices: readonly string[] };
 export type SellActions = {
+  /** Import into a chosen list: read a file into rows (nothing saved), then save the checked rows. */
+  previewList?: (listId: string, fileId: string) => Promise<Reply<{ rows: { name: string; cells: Record<string, string | number | boolean | null> }[]; unclear: boolean }>>;
+  commitList?: (listId: string, rows: { name: string; cells: Record<string, string | number | boolean | null> }[]) => Promise<Reply<{ created: number; updated: number }>>;
   save: (style: SellStyle, id: string | null, form: SellForm[SellStyle], extra?: SaveExtra) => Promise<Reply<{ entry: SellEntry; photosPath: string | null; note: "count" | null }>>;
   remove: (style: SellStyle, id: string) => Promise<Reply<{ id: string }>>;
   understand: (style: SellStyle, text: string) => Promise<Reply<{ form: SellForm[SellStyle] }>>;
