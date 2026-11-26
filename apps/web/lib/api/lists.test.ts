@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { parseRupees, rupees } from "@/lib/lists/types";
 
 import { ApiRequestError } from "./client";
-import { parseList, parseLists, parseRows, refusalOf } from "./lists";
+import { parseImportPreview, parseList, parseLists, parseRows, refusalOf } from "./lists";
 
 const LIST = { id: "11111111-1111-4111-8111-111111111111", name: "Dress materials", kind: "products", is_main: false, row_count: 24, columns: [
   { key: "name", label: "Name", type: "text", choices: [], role: null, billing_period: null, quote_default: false },
@@ -49,3 +49,22 @@ describe("rupees in whole paise", () => {
     expect(parseRupees("abc")).toBeNull();
   });
 });
+
+describe("round two of the lists (26 Nov 2026)", () => {
+  const col = { key: "category", label: "Category", type: "choice", choices: ["Silk", "Cotton"], role: "category", billing_period: null, quote_default: false };
+  it("reads the Category role and a built-in list's `builtin` and `edit_in`; an unknown word for either is null, never a failure", () => {
+    const l = parseList({ id: "11111111-1111-4111-8111-111111111111", name: "Sarees", kind: "products", is_main: false, row_count: 40, columns: [{ key: "name", label: "Name", type: "text" }, col], builtin: "catalogue", edit_in: "catalogue" });
+    expect(l.columns[1]).toMatchObject({ role: "category", type: "choice", choices: ["Silk", "Cotton"] });
+    expect([l.builtin, l.editIn]).toEqual(["catalogue", "catalogue"]);
+    const m = parseList({ id: "22222222-2222-4222-8222-222222222222", name: "Mine", kind: "other", is_main: false, row_count: 0, columns: [{ key: "name", label: "Name", type: "text" }], builtin: "unheard_of", edit_in: 5 });
+    expect([m.builtin, m.editIn]).toEqual([null, null]);
+  });
+  it("the import preview keeps rows with their cells, drops cells of odd types, and says when it could not read", () => {
+    const p = parseImportPreview({ mapping: { Name: "name" }, rows: [{ name: "Cotton blue", cells: { retail: 145000, category: "Cotton", odd: { x: 1 } } }], notes: [{ code: "cell_unreadable", row: 3, column: "retail" }, { nonsense: true }], unclear: false });
+    expect(p.rows).toEqual([{ name: "Cotton blue", cells: { retail: 145000, category: "Cotton", odd: null } }]);
+    expect(p.notes).toEqual([{ code: "cell_unreadable", row: 3, column: "retail" }]);
+    expect(parseImportPreview({ rows: [], notes: [], unclear: true }).unclear).toBe(true);
+    expect(() => parseImportPreview({ rows: "x" })).toThrow();
+  });
+});
+

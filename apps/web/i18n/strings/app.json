@@ -139534,5 +139534,280 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "wls.builtin.catalogue": {
+  "en": "Edit in the catalogue",
+  "te": "కేటలాగ్‌లో ఎడిట్ చేయండి",
+  "hi": "कैटलॉग में बदलें",
+  "kn": "ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಬದಲಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.builtin.price_list": {
+  "en": "Edit in Price list",
+  "te": "ప్రైస్ లిస్ట్‌లో ఎడిట్ చేయండి",
+  "hi": "प्राइस लिस्ट में बदलें",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಬದಲಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.builtin.what_you_sell": {
+  "en": "Edit further down this page",
+  "te": "ఈ పేజీలో కింద ఎడిట్ చేయండి",
+  "hi": "इसी पेज पर नीचे बदलें",
+  "kn": "ಈ ಪೇಜ್‌ನಲ್ಲಿ ಕೆಳಗೆ ಬದಲಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.settings.title": {
+  "en": "List settings",
+  "te": "లిస్ట్ సెట్టింగ్స్",
+  "hi": "लिस्ट की सेटिंग्स",
+  "kn": "ಲಿಸ್ಟ್ ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.settings.rename": {
+  "en": "Name of the list",
+  "te": "లిస్ట్ పేరు",
+  "hi": "लिस्ट का नाम",
+  "kn": "ಲಿಸ್ಟ್ ಹೆಸರು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.settings.renamed": {
+  "en": "Renamed.",
+  "te": "పేరు మార్చాం.",
+  "hi": "नाम बदल दिया।",
+  "kn": "ಹೆಸರು ಬದಲಿಸಿದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.settings.delete": {
+  "en": "Delete this list",
+  "te": "ఈ లిస్ట్ డిలీట్ చేయండి",
+  "hi": "यह लिस्ट मिटाएँ",
+  "kn": "ಈ ಲಿಸ್ಟ್ ಅಳಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.settings.delete.sure": {
+  "en": "Delete \"{name}\" and its {n} items? This cannot be undone.",
+  "te": "\"{name}\"ని, దానిలోని {n} ఐటెమ్స్‌ని డిలీట్ చేయాలా? ఇది వెనక్కి తీసుకోలేం.",
+  "hi": "\"{name}\" और उसके {n} आइटम मिटाएँ? इसे वापस नहीं किया जा सकता।",
+  "kn": "\"{name}\" ಮತ್ತು ಅದರ {n} ಐಟಂಗಳನ್ನು ಅಳಿಸಬೇಕೇ? ಇದನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.settings.delete.yes": {
+  "en": "Yes, delete it",
+  "te": "అవును, డిలీట్ చేయండి",
+  "hi": "हाँ, मिटाएँ",
+  "kn": "ಹೌದು, ಅಳಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.starter.title": {
+  "en": "Add starter lists",
+  "te": "స్టార్టర్ లిస్ట్‌లు యాడ్ చేయండి",
+  "hi": "स्टार्टर लिस्ट जोड़ें",
+  "kn": "ಸ್ಟಾರ್ಟರ್ ಲಿಸ್ಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.starter.sub": {
+  "en": "One press makes six lists for a textile shop: Sarees, Dress materials, Blouses, Dupattas, Fabric by the metre, and Stitching and alterations. Each has a Category column you can fill (Silk, Cotton, Bridal...).",
+  "te": "ఒక్క నొక్కుతో టెక్స్‌టైల్ షాప్‌కి ఆరు లిస్ట్‌లు తయారవుతాయి: చీరలు, డ్రెస్ మెటీరియల్స్, బ్లౌజ్‌లు, దుపట్టాలు, మీటర్ల లెక్కన ఫ్యాబ్రిక్, స్టిచ్చింగ్ అండ్ ఆల్టరేషన్స్. ప్రతిదానికి కేటగిరీ కాలమ్ ఉంటుంది (సిల్క్, కాటన్, బ్రైడల్...).",
+  "hi": "एक बार दबाने से टेक्सटाइल दुकान के लिए छह लिस्ट बनती हैं: साड़ियाँ, ड्रेस मटीरियल, ब्लाउज़, दुपट्टे, मीटर के हिसाब से फ़ैब्रिक, और सिलाई व अल्टरेशन। हर एक में कैटेगरी कॉलम होता है (सिल्क, कॉटन, ब्राइडल...)।",
+  "kn": "ಒಂದು ಒತ್ತಿದರೆ ಟೆಕ್ಸ್‌ಟೈಲ್ ಅಂಗಡಿಗೆ ಆರು ಲಿಸ್ಟ್ ಆಗುತ್ತವೆ: ಸೀರೆಗಳು, ಡ್ರೆಸ್ ಮೆಟೀರಿಯಲ್, ಬ್ಲೌಸ್‌ಗಳು, ದುಪಟ್ಟಾಗಳು, ಮೀಟರ್ ಲೆಕ್ಕದ ಫ್ಯಾಬ್ರಿಕ್, ಹೊಲಿಗೆ ಮತ್ತು ಆಲ್ಟರೇಷನ್. ಪ್ರತಿಯೊಂದರಲ್ಲಿ ಕೆಟಗರಿ ಕಾಲಮ್ ಇರುತ್ತದೆ (ಸಿಲ್ಕ್, ಕಾಟನ್, ಬ್ರೈಡಲ್...).",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.starter.go": {
+  "en": "Add the six lists",
+  "te": "ఆరు లిస్ట్‌లు యాడ్ చేయండి",
+  "hi": "छह लिस्ट जोड़ें",
+  "kn": "ಆರು ಲಿಸ್ಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.starter.note": {
+  "en": "Nothing is made until you press the button. You can rename, change or delete any list afterwards, and add your own.",
+  "te": "బటన్ నొక్కే వరకు ఏదీ తయారవదు. తర్వాత ఏ లిస్ట్‌నైనా పేరు మార్చొచ్చు, మార్చొచ్చు లేదా డిలీట్ చేయొచ్చు, మీ సొంతవి యాడ్ చేయొచ్చు.",
+  "hi": "बटन दबाने तक कुछ नहीं बनता। बाद में किसी भी लिस्ट का नाम बदल सकते हैं, बदल या मिटा सकते हैं, और अपनी लिस्ट जोड़ सकते हैं।",
+  "kn": "ಬಟನ್ ಒತ್ತುವವರೆಗೆ ಏನೂ ಆಗುವುದಿಲ್ಲ. ನಂತರ ಯಾವುದೇ ಲಿಸ್ಟ್‌ನ ಹೆಸರು ಬದಲಿಸಬಹುದು, ಬದಲಿಸಬಹುದು ಅಥವಾ ಅಳಿಸಬಹುದು, ನಿಮ್ಮದೇ ಲಿಸ್ಟ್ ಸೇರಿಸಬಹುದು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.role.category": {
+  "en": "Category",
+  "te": "కేటగిరీ",
+  "hi": "कैटेगरी",
+  "kn": "ಕೆಟಗರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.col.add_category": {
+  "en": "+ Add a Category",
+  "te": "+ కేటగిరీ యాడ్ చేయండి",
+  "hi": "+ कैटेगरी जोड़ें",
+  "kn": "+ ಕೆಟಗರಿ ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.group": {
+  "en": "Group by {name}",
+  "te": "{name} వారీగా గ్రూప్ చేయండి",
+  "hi": "{name} के हिसाब से ग्रुप करें",
+  "kn": "{name} ಪ್ರಕಾರ ಗುಂಪು ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wls.group.none": {
+  "en": "No category",
+  "te": "కేటగిరీ లేదు",
+  "hi": "कैटेगरी नहीं",
+  "kn": "ಕೆಟಗರಿ ಇಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.target.title": {
+  "en": "Add them to which list?",
+  "te": "ఏ లిస్ట్‌లో యాడ్ చేయాలి?",
+  "hi": "किस लिस्ट में जोड़ना है?",
+  "kn": "ಯಾವ ಲಿಸ್ಟ್‌ಗೆ ಸೇರಿಸಬೇಕು?",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.target.catalogue": {
+  "en": "Sarees (the catalogue)",
+  "te": "చీరలు (కేటలాగ్)",
+  "hi": "साड़ियाँ (कैटलॉग)",
+  "kn": "ಸೀರೆಗಳು (ಕ್ಯಾಟಲಾಗ್)",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.target.choose": {
+  "en": "Choose a list first.",
+  "te": "ముందు ఒక లిస్ట్ ఎంచుకోండి.",
+  "hi": "पहले एक लिस्ट चुनें।",
+  "kn": "ಮೊದಲು ಒಂದು ಲಿಸ್ಟ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.adding_to": {
+  "en": "Adding to {name}",
+  "te": "{name}లో యాడ్ చేస్తున్నాం",
+  "hi": "{name} में जोड़ रहे हैं",
+  "kn": "{name} ಗೆ ಸೇರಿಸುತ್ತಿದ್ದೇವೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.cat_fill": {
+  "en": "Category for rows that have none",
+  "te": "కేటగిరీ లేని లైన్లకు కేటగిరీ",
+  "hi": "जिन लाइनों में कैटेगरी नहीं उनके लिए कैटेगरी",
+  "kn": "ಕೆಟಗರಿ ಇಲ್ಲದ ಸಾಲುಗಳಿಗೆ ಕೆಟಗರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.cat_none": {
+  "en": "Leave empty",
+  "te": "ఖాళీగా వదిలేయండి",
+  "hi": "खाली छोड़ें",
+  "kn": "ಖಾಲಿ ಬಿಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.done_list": {
+  "en": "{n} items added to {name}.",
+  "te": "{name}లో {n} ఐటెమ్స్ యాడ్ అయ్యాయి.",
+  "hi": "{name} में {n} आइटम जुड़ गए।",
+  "kn": "{name} ಗೆ {n} ಐಟಂ ಸೇರಿದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.open_list": {
+  "en": "Open {name}",
+  "te": "{name} తెరవండి",
+  "hi": "{name} खोलें",
+  "kn": "{name} ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }

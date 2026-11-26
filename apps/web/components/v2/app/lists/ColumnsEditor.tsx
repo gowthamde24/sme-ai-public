@@ -85,7 +85,7 @@ export function ColumnsEditor({ list, words, back, save }: { list: SellList; wor
               </label>
               <select id={id(c, "r")} value={c.role} disabled={i === 0} onChange={(e) => set(c.uid, { role: e.target.value as ColumnRole | "" })} className={fieldInput}>
                 <option value="">{t("wls.role.none")}</option>
-                {COLUMN_ROLES.filter((x) => x !== "price" || c.type === "rupees").map((x) => (
+                {COLUMN_ROLES.filter((x) => (x !== "price" || c.type === "rupees") && (x !== "category" || c.type === "choice")).map((x) => (
                   <option key={x} value={x}>
                     {t(`wls.role.${x}` as "wls.role.price")}
                   </option>
@@ -143,6 +143,12 @@ export function ColumnsEditor({ list, words, back, save }: { list: SellList; wor
         <button type="button" disabled={cols.length >= MAX_COLUMNS} onClick={() => setCols((cur) => [...cur, { key: null, label: "", type: "text", choices: "", role: "", billing: "one_time", quote: false, open: false, uid: crypto.randomUUID() }])} className={btnQuiet}>
           {t("wls.col.add")}
         </button>
+        {/* a named choice column the owner fills with his own words (Silk, Cotton, Bridal...): the list gets filter chips and grouping from it */}
+        {cols.some((c) => c.role === "category") ? null : (
+          <button type="button" data-action="add-category" disabled={cols.length >= MAX_COLUMNS} onClick={() => setCols((cur) => [...cur, { key: null, label: t("wls.role.category"), type: "choice", choices: "", role: "category", billing: "one_time", quote: false, open: true, uid: crypto.randomUUID() }])} className={btnQuiet}>
+            {t("wls.col.add_category")}
+          </button>
+        )}
         <span className="text-[14px] text-muted">{t("wls.cols.count", { n: cols.length, max: MAX_COLUMNS })}</span>
       </div>
       <p className="m-0 mt-4 border-y border-line py-3 text-[15px] text-muted">{t("wls.col.note")}</p>
