@@ -604,7 +604,7 @@ describe("importing into the list the owner chooses (26 Nov 2026)", () => {
   });
   it("a file for a list goes up, is read by the list's reading, shows the check table, and the checked rows are saved into THAT list with the Category given to rows with none", async () => {
     vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ json: async () => ({ ok: true, file_id: "5e110009-0000-4000-8000-0000000000bb" }) })));
-    const previewList = vi.fn(async () => ({ ok: true as const, data: { unclear: false, rows: [{ name: "Cotton blue", cells: { retail: 145000, category: "Cotton", lining: "Satin" } }, { name: "Georgette maroon", cells: { retail: null } }] } }));
+    const previewList = vi.fn(async () => ({ ok: true as const, data: { unclear: false, rows: [{ name: "Cotton blue", cells: { retail: 145000, category: "Cotton", lining: "Satin" } }, { name: "Georgette maroon", cells: { retail: null } }] as { name: string; cells: Record<string, string | number | boolean | null> }[] } }));
     const commitList = vi.fn(async () => ({ ok: true as const, data: { created: 2, updated: 0 } }));
     const a = actions({ previewList, commitList });
     const dialog = await open(a);
